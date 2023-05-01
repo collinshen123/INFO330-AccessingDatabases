@@ -17,17 +17,14 @@ for i, arg in enumerate(sys.argv):
     if i == 0:
         continue
 
-    # try:
-    #     pokedex_num = int(arg)
-    # except ValueError:
-    #     print(f"Error: Invalid pokedex number {arg}")
-    #     sys.exit()
+    try:
+        pokedex_num = int(arg)
+    except ValueError:
+        print(f"Error: Invalid pokedex number {arg}")
+        sys.exit()
     # Analyze the pokemon whose pokedex_number is in "arg"
     conn = sqlite3.connect('pokemon.sqlite')
     c = conn.cursor()
-    
-        
-    # You will need to write the SQL, extract the results, and compare
 
     # find curr pokemon name
     query = """
@@ -38,7 +35,6 @@ for i, arg in enumerate(sys.argv):
     c.execute(query, (arg,))
     name_result = c.fetchone()
     pokemon_name = name_result[2]
-    # print (name_result[2])
 
     # find curr pokemon types
     query_1 = """
@@ -49,7 +45,6 @@ for i, arg in enumerate(sys.argv):
     c.execute(query_1, (pokemon_name,))
     types_result = c.fetchone()
     pokemon_types = (types_result[1], types_result[2])
-    # print(pokemon_types)
 
     # find curr pokemon type id
     query_2 = """
@@ -62,28 +57,25 @@ for i, arg in enumerate(sys.argv):
     c.execute(query_2, (pokemon_types[1],))
     types_2 = c.fetchone()
 
-
-    type_1_id = types_1[0]
-    type_2_id = types_2[0]
-    # print(type_1_id)
-    # print(type_2_id)
-
     # find curr pokemon weaknesses
     query_3 = """
     SELECT *
     FROM against
     WHERE type_source_id1 = ? and type_source_id2 = ?
     """
-    c.execute(query_3, (type_1_id, type_2_id))
+    c.execute(query_3, (types_1[0], types_2[0]))
     against_result = c.fetchone()
 
+
+    # create new list without type id's
     new_against_result = against_result[2:]
 
+    # Store the analysis in a dictionary
     against_map = {}
     for against, nums in zip(types, new_against_result):
             against_map[against] = nums
-            
-    # print (against_result)
+
+
 
     # Remember to look at those "against_NNN" column values; greater than 1
     # means the Pokemon is strong against that type, and less than 1 means
@@ -96,15 +88,8 @@ for i, arg in enumerate(sys.argv):
         elif against_map[against] < 1:
             weaknesses.append(against)
     
-    # Store the analysis in a dictionary
-    
-    # print(pokemon_name)
-    # print(pokemon_types)
-    # print(strengths)
-    # print(weaknesses)
 
-    # team[arg] = {'name': pokemon_name, 'types': pokemon_types, 'strengths': strengths, 'weaknesses': weaknesses}
-
+    # printing
     print(f"Analyzing {arg}")
     print(f"{pokemon_name} ({pokemon_types[0]}{' ' + pokemon_types[1] if pokemon_types[1] else ''}) is strong against {strengths} but weak against {weaknesses}")
     conn.close()
