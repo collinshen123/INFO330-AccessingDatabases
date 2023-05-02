@@ -42,24 +42,13 @@ for i, arg in enumerate(sys.argv):
         types_result = c.fetchone()
         pokemon_types = (types_result[1], types_result[2])
 
-        # find curr pokemon type id
+       # find curr pokemon type id
         query_2 = """
         SELECT *
-        FROM type
-        WHERE name = ?
+        FROM pokemon_types_battle_view
+        WHERE type1name = ? and type2name = ?
         """
-        c.execute(query_2, (pokemon_types[0],))
-        types_1 = c.fetchone()
-        c.execute(query_2, (pokemon_types[1],))
-        types_2 = c.fetchone()
-
-        # find curr pokemon weaknesses
-        query_3 = """
-        SELECT *
-        FROM against
-        WHERE type_source_id1 = ? and type_source_id2 = ?
-        """
-        c.execute(query_3, (types_1[0], types_2[0]))
+        c.execute(query_2, (pokemon_types[0],pokemon_types[1]))
         against_result = c.fetchone()
 
 
@@ -101,23 +90,12 @@ for i, arg in enumerate(sys.argv):
         # find curr pokemon type id
         query_2 = """
         SELECT *
-        FROM type
-        WHERE name = ?
+        FROM pokemon_types_battle_view
+        WHERE type1name = ? and type2name = ?
         """
-        c.execute(query_2, (pokemon_types[0],))
-        types_1 = c.fetchone()
-        c.execute(query_2, (pokemon_types[1],))
-        types_2 = c.fetchone()
-
-        # find curr pokemon weaknesses
-        query_3 = """
-        SELECT *
-        FROM against
-        WHERE type_source_id1 = ? and type_source_id2 = ?
-        """
-        c.execute(query_3, (types_1[0], types_2[0]))
-        against_result = c.fetchone()
-
+        c.execute(query_2, (pokemon_types[0],pokemon_types[1]))
+        against_result = c.fetchone() 
+        
         new_against_result = against_result[2:]
 
         # Store the analysis in a dictionary

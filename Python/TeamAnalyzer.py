@@ -49,22 +49,15 @@ for i, arg in enumerate(sys.argv):
     # find curr pokemon type id
     query_2 = """
     SELECT *
-    FROM type
-    WHERE name = ?
+    FROM pokemon_types_battle_view
+    WHERE type1name = ? and type2name = ?
     """
-    c.execute(query_2, (pokemon_types[0],))
-    types_1 = c.fetchone()
-    c.execute(query_2, (pokemon_types[1],))
-    types_2 = c.fetchone()
-
-    # find curr pokemon weaknesses
-    query_3 = """
-    SELECT *
-    FROM against
-    WHERE type_source_id1 = ? and type_source_id2 = ?
-    """
-    c.execute(query_3, (types_1[0], types_2[0]))
+    c.execute(query_2, (pokemon_types[0],pokemon_types[1]))
     against_result = c.fetchone()
+    
+
+   
+    
 
 
     # create new list without type id's
